@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Pippa Elsie — Singer</title>
+        <meta name="description" content="Listen to songs by Pippa Elsie." />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #faf6f1;
+                --bg-warm: #f3ece2;
+                --text: #2c2420;
+                --text-soft: #6b5e54;
+                --accent: #d4725c;
+                --accent-hover: #c0614d;
+                --accent-glow: rgba(212, 114, 92, 0.15);
+                --card-bg: #ffffff;
+                --card-shadow: 0 2px 20px rgba(44, 36, 32, 0.06);
+                --card-shadow-hover: 0 8px 40px rgba(44, 36, 32, 0.1);
+                --progress-bg: #e8dfd4;
+                --radius: 16px;
+                --radius-sm: 10px;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                font-family: "Outfit", sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
+                min-height: 100vh;
+            }
+
+            /* ── Grain overlay ── */
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                opacity: 0.03;
+                pointer-events: none;
+                z-index: 9999;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+                background-repeat: repeat;
+                background-size: 256px 256px;
+            }
+
+            /* ── Hero ── */
+            .hero {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 100px 24px 60px;
+                text-align: center;
+                position: relative;
+            }
+
+            .hero::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80px;
+                height: 2px;
+                background: var(--accent);
+                opacity: 0.4;
+                border-radius: 1px;
+            }
+
+            .hero-photo {
+                width: 160px;
+                height: 160px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 4px solid var(--card-bg);
+                box-shadow: 0 8px 30px rgba(44, 36, 32, 0.1);
+                margin-bottom: 28px;
+                /* Placeholder gradient — replace src with real photo */
+                background: linear-gradient(
+                    135deg,
+                    #e8b4a2 0%,
+                    #d4725c 50%,
+                    #a85742 100%
+                );
+                opacity: 0;
+                animation: fadeUp 0.8s ease forwards;
+            }
+
+            .hero h1 {
+                font-family: "DM Serif Display", serif;
+                font-size: clamp(2.4rem, 6vw, 3.8rem);
+                font-weight: 400;
+                letter-spacing: -0.02em;
+                line-height: 1.1;
+                margin-bottom: 12px;
+                opacity: 0;
+                animation: fadeUp 0.8s ease 0.15s forwards;
+            }
+
+            .hero p {
+                font-size: 1.05rem;
+                color: var(--text-soft);
+                font-weight: 300;
+                max-width: 380px;
+                opacity: 0;
+                animation: fadeUp 0.8s ease 0.3s forwards;
+            }
+
+            /* ── Songs section ── */
+            .songs-section {
+                max-width: 680px;
+                margin: 0 auto;
+                padding: 60px 24px 100px;
+            }
+
+            .section-label {
+                font-size: 0.75rem;
+                font-weight: 600;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--accent);
+                margin-bottom: 24px;
+                opacity: 0;
+                animation: fadeUp 0.6s ease 0.45s forwards;
+            }
+
+            /* ── Song card ── */
+            .song-card {
+                background: var(--card-bg);
+                border-radius: var(--radius);
+                padding: 24px;
+                margin-bottom: 16px;
+                box-shadow: var(--card-shadow);
+                transition:
+                    box-shadow 0.3s ease,
+                    transform 0.3s ease;
+                opacity: 0;
+                animation: fadeUp 0.6s ease forwards;
+            }
+
+            .song-card:nth-child(2) {
+                animation-delay: 0.55s;
+            }
+            .song-card:nth-child(3) {
+                animation-delay: 0.65s;
+            }
+            .song-card:nth-child(4) {
+                animation-delay: 0.75s;
+            }
+
+            .song-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-2px);
+            }
+
+            .song-header {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                cursor: pointer;
+                user-select: none;
+            }
+
+            .song-art {
+                width: 64px;
+                height: 64px;
+                border-radius: var(--radius-sm);
+                flex-shrink: 0;
+                object-fit: cover;
+                /* Placeholder — replace with cover art */
+                background: linear-gradient(135deg, #e8b4a2 0%, #d4725c 100%);
+            }
+
+            .song-art.art-2 {
+                background: linear-gradient(135deg, #b8c9a3 0%, #7a9b5e 100%);
+            }
+
+            .song-art.art-3 {
+                background: linear-gradient(135deg, #a3b8c9 0%, #5e7a9b 100%);
+            }
+
+            .song-info {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .song-title {
+                font-family: "DM Serif Display", serif;
+                font-size: 1.2rem;
+                font-weight: 400;
+                line-height: 1.3;
+                margin-bottom: 2px;
+            }
+
+            .song-meta {
+                font-size: 0.82rem;
+                color: var(--text-soft);
+                font-weight: 300;
+            }
+
+            .play-btn {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                border: none;
+                background: var(--accent);
+                color: #fff;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                transition:
+                    background 0.2s ease,
+                    transform 0.15s ease;
+                box-shadow: 0 2px 12px var(--accent-glow);
+            }
+
+            .play-btn:hover {
+                background: var(--accent-hover);
+                transform: scale(1.08);
+            }
+
+            .play-btn:active {
+                transform: scale(0.96);
+            }
+
+            .play-btn svg {
+                width: 20px;
+                height: 20px;
+                transition: opacity 0.15s;
+            }
+
+            .play-btn .icon-pause {
+                display: none;
+            }
+            .play-btn.playing .icon-play {
+                display: none;
+            }
+            .play-btn.playing .icon-pause {
+                display: block;
+            }
+
+            /* ── Player bar (visible when song active) ── */
+            .player-bar {
+                margin-top: 20px;
+                display: none;
+            }
+
+            .player-bar.active {
+                display: block;
+                animation: fadeIn 0.3s ease;
+            }
+
+            .progress-container {
+                width: 100%;
+                height: 6px;
+                background: var(--progress-bg);
+                border-radius: 3px;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: var(--accent);
+                border-radius: 3px;
+                width: 0%;
+                transition: width 0.1s linear;
+            }
+
+            .time-row {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 8px;
+                font-size: 0.75rem;
+                color: var(--text-soft);
+                font-weight: 400;
+                font-variant-numeric: tabular-nums;
+            }
+
+            /* ── Footer ── */
+            .site-footer {
+                text-align: center;
+                padding: 0 24px 48px;
+                font-size: 0.8rem;
+                color: var(--text-soft);
+                font-weight: 300;
+            }
+
+            .site-footer a {
+                color: var(--accent);
+                text-decoration: none;
+            }
+
+            /* ── Animations ── */
+            @keyframes fadeUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(16px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            /* ── Responsive ── */
+            @media (max-width: 480px) {
+                .hero {
+                    padding: 72px 20px 48px;
+                }
+                .hero-photo {
+                    width: 120px;
+                    height: 120px;
+                }
+                .songs-section {
+                    padding: 48px 16px 80px;
+                }
+                .song-card {
+                    padding: 18px;
+                }
+                .song-art {
+                    width: 52px;
+                    height: 52px;
+                }
+                .song-title {
+                    font-size: 1.05rem;
+                }
+                .play-btn {
+                    width: 42px;
+                    height: 42px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- ── Hero ── -->
+        <header class="hero">
+            <!-- Replace with <img src="photo.jpg" alt="Pippa Elsie" class="hero-photo"> -->
+            <div class="hero-photo" role="img" aria-label="Pippa Elsie"></div>
+            <h1>Pippa Elsie</h1>
+            <p>Songs, covers and everything in between.</p>
+        </header>
+
+        <!-- ── Songs ── -->
+        <main class="songs-section">
+            <div class="section-label">Songs</div>
+
+            <!--
+            ╔══════════════════════════════════════════════════════╗
+            ║  TO ADD A NEW SONG:                                  ║
+            ║  1. Copy one of the song-card blocks below           ║
+            ║  2. Update: data-src, title, meta, art class         ║
+            ║  3. Drop the audio file in the same folder           ║
+            ╚══════════════════════════════════════════════════════╝
+        -->
+
+            <div class="song-card" data-src="songs/song-1.mp3">
+                <div class="song-header" onclick="togglePlay(this)">
+                    <div class="song-art" aria-hidden="true"></div>
+                    <div class="song-info">
+                        <div class="song-title">Song Title One</div>
+                        <div class="song-meta">Cover · 2026</div>
+                    </div>
+                    <button class="play-btn" aria-label="Play">
+                        <svg
+                            class="icon-play"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <polygon points="6,4 20,12 6,20" />
+                        </svg>
+                        <svg
+                            class="icon-pause"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <rect x="5" y="4" width="4" height="16" rx="1" />
+                            <rect x="15" y="4" width="4" height="16" rx="1" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="player-bar">
+                    <div class="progress-container" onclick="seek(event, this)">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="time-row">
+                        <span class="time-current">0:00</span>
+                        <span class="time-total">0:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="song-card" data-src="songs/song-2.mp3">
+                <div class="song-header" onclick="togglePlay(this)">
+                    <div class="song-art art-2" aria-hidden="true"></div>
+                    <div class="song-info">
+                        <div class="song-title">Song Title Two</div>
+                        <div class="song-meta">Original · 2026</div>
+                    </div>
+                    <button class="play-btn" aria-label="Play">
+                        <svg
+                            class="icon-play"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <polygon points="6,4 20,12 6,20" />
+                        </svg>
+                        <svg
+                            class="icon-pause"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <rect x="5" y="4" width="4" height="16" rx="1" />
+                            <rect x="15" y="4" width="4" height="16" rx="1" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="player-bar">
+                    <div class="progress-container" onclick="seek(event, this)">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="time-row">
+                        <span class="time-current">0:00</span>
+                        <span class="time-total">0:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="song-card" data-src="songs/song-3.mp3">
+                <div class="song-header" onclick="togglePlay(this)">
+                    <div class="song-art art-3" aria-hidden="true"></div>
+                    <div class="song-info">
+                        <div class="song-title">Song Title Three</div>
+                        <div class="song-meta">Cover · 2026</div>
+                    </div>
+                    <button class="play-btn" aria-label="Play">
+                        <svg
+                            class="icon-play"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <polygon points="6,4 20,12 6,20" />
+                        </svg>
+                        <svg
+                            class="icon-pause"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <rect x="5" y="4" width="4" height="16" rx="1" />
+                            <rect x="15" y="4" width="4" height="16" rx="1" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="player-bar">
+                    <div class="progress-container" onclick="seek(event, this)">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="time-row">
+                        <span class="time-current">0:00</span>
+                        <span class="time-total">0:00</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">&copy; 2026 Pippa Elsie</footer>
+
+        <script>
+            // ── Audio engine ──
+            let currentAudio = null;
+            let currentCard = null;
+            let rafId = null;
+
+            function togglePlay(header) {
+                const card = header.closest(".song-card");
+                const btn = card.querySelector(".play-btn");
+                const bar = card.querySelector(".player-bar");
+                const src = card.dataset.src;
+
+                // If clicking a different card, stop current
+                if (currentCard && currentCard !== card) {
+                    stopCurrent();
+                }
+
+                // If no audio yet for this card, create one
+                if (!currentAudio || currentCard !== card) {
+                    currentAudio = new Audio(src);
+                    currentCard = card;
+
+                    currentAudio.addEventListener("loadedmetadata", () => {
+                        card.querySelector(".time-total").textContent =
+                            formatTime(currentAudio.duration);
+                    });
+
+                    currentAudio.addEventListener("ended", () => {
+                        stopCurrent();
+                    });
+                }
+
+                if (currentAudio.paused) {
+                    currentAudio.play().catch(() => {});
+                    btn.classList.add("playing");
+                    bar.classList.add("active");
+                    updateProgress();
+                } else {
+                    currentAudio.pause();
+                    btn.classList.remove("playing");
+                    cancelAnimationFrame(rafId);
+                }
+            }
+
+            function stopCurrent() {
+                if (!currentAudio) return;
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                cancelAnimationFrame(rafId);
+
+                const btn = currentCard.querySelector(".play-btn");
+                const bar = currentCard.querySelector(".player-bar");
+                const fill = currentCard.querySelector(".progress-fill");
+
+                btn.classList.remove("playing");
+                bar.classList.remove("active");
+                fill.style.width = "0%";
+                currentCard.querySelector(".time-current").textContent = "0:00";
+
+                currentAudio = null;
+                currentCard = null;
+            }
+
+            function updateProgress() {
+                if (!currentAudio || currentAudio.paused) return;
+
+                const fill = currentCard.querySelector(".progress-fill");
+                const timeEl = currentCard.querySelector(".time-current");
+                const pct =
+                    (currentAudio.currentTime / currentAudio.duration) * 100;
+
+                fill.style.width = pct + "%";
+                timeEl.textContent = formatTime(currentAudio.currentTime);
+
+                rafId = requestAnimationFrame(updateProgress);
+            }
+
+            function seek(e, container) {
+                if (!currentAudio) return;
+                const rect = container.getBoundingClientRect();
+                const pct = (e.clientX - rect.left) / rect.width;
+                currentAudio.currentTime = pct * currentAudio.duration;
+                updateProgress();
+            }
+
+            function formatTime(s) {
+                if (isNaN(s)) return "0:00";
+                const m = Math.floor(s / 60);
+                const sec = Math.floor(s % 60);
+                return m + ":" + (sec < 10 ? "0" : "") + sec;
+            }
+        </script>
+    </body>
+</html>
